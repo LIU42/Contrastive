@@ -1,0 +1,11 @@
+epochs: 200
+learning-rate: 0.000005
+batch-size: 192
+num-workers: 8
+use-amp: true
+use-augment: true
+temperature: 0.07
+
+load-path: "weights/develop/pretrain.pt"
+best-path: "weights/develop/best.pt"
+last-path: "weights/develop/last.pt"
