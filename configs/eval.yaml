@@ -1,4 +1,4 @@
 batch-size: 256
 num-workers: 8
 use-amp: true
-model-path: "weights/develop/best.pt"
+model-path: "checkpoints/best.pt"

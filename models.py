@@ -26,9 +26,9 @@ class TextEncoder(nn.Module):
         super().__init__()
 
         if pretrained:
-            self.roberta = RobertaModel.from_pretrained('weights/develop/roberta')
+            self.roberta = RobertaModel.from_pretrained('pretrains/roberta')
         else:
-            self.roberta = RobertaModel(RobertaConfig.from_pretrained('weights/develop/roberta'))
+            self.roberta = RobertaModel(RobertaConfig.from_pretrained('pretrains/roberta'))
 
     def forward(self, texts, masks):
         return functional.normalize(self.roberta(texts, masks).pooler_output)

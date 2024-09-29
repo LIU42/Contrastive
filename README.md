@@ -75,11 +75,11 @@ filename,caption
 
 ### 模型准备
 
-由于众所周知的原因，您需要想办法手动从 [Hugging Face](https://huggingface.co/) 上下载 RoBERTa 模型的相关文件和预训练权重到 <u>weights/develop/roberta/</u> 目录下，但 ResNet50 模型的预训练权重能够自动下载，随后运行 prepare.py 文件，这将会加载 ResNet50 和 RoBERTa 模型的模型结构和预训练权重并进行整合，作为一个联合模型保存到本地用于下一步的训练工作。对应的配置文件为 <u>configs/model.yaml</u>，默认配置及其含义如下：
+由于众所周知的原因，您需要想办法手动从 [Hugging Face](https://huggingface.co/) 上下载 RoBERTa 模型的相关文件和预训练权重到 <u>weights/develop/roberta/</u> 目录下，但 ResNet50 模型的预训练权重能够自动下载，随后运行 init.py 文件，这将会加载 ResNet50 和 RoBERTa 模型的模型结构和预训练权重并进行整合，作为一个联合模型保存到本地用于下一步的训练工作。对应的配置文件为 <u>configs/model.yaml</u>，默认配置及其含义如下：
 
 ```yaml
 pretrained: true                            # 是否加载预训练参数
-save-path: "weights/develop/pretrain.pt"    # 模型输出路径
+save-path: "checkpoints/pretrain.pt"    # 模型输出路径
 ```
 
 ### 模型训练
@@ -95,8 +95,8 @@ use-amp: true                  # 是否启动 AMP（自动混合精度），开�
 use-augment: true              # 是否启用图像数据增强
 temperature: 0.07              # 损失函数温度参数，具体作用有待验证
 
-load-path: "weights/develop/pretrain.pt"    # 初始模型加载路径
-best-path: "weights/develop/best.pt"        # 当前验证集最优模型保存路径
+load-path: "checkpoints/pretrain.pt"    # 初始模型加载路径
+best-path: "checkpoints/best.pt"        # 当前验证集最优模型保存路径
 last-path: "weights/develop/last.pt"        # 最后一次训练模型保存路径
 ```
 

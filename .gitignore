@@ -160,7 +160,9 @@ cython_debug/
 .idea
 
 .vscode/
+checkpoints/*
+pretrains/*
+weights/*
+
 datasets/train/*
 datasets/valid/*
-weights/develop/*
-weights/product/*

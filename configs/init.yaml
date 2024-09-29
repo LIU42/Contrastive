@@ -1,0 +1,2 @@
+pretrained: true
+save-path: "checkpoints/pretrain.pt"

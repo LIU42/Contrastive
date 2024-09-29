@@ -1,2 +1,0 @@
-pretrained: true
-save-path: "weights/develop/pretrain.pt"

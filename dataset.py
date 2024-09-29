@@ -27,7 +27,7 @@ class CaptionDataset(data.Dataset):
 
     def tokenize(self):
         captions = []
-        tokenizer = RobertaTokenizer.from_pretrained('weights/develop/roberta', clean_up_tokenization_spaces=True)
+        tokenizer = RobertaTokenizer.from_pretrained('pretrains/roberta', clean_up_tokenization_spaces=True)
 
         for caption in self.captions.caption:
             captions.append(caption)
