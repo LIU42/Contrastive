@@ -11,19 +11,22 @@ class CaptionDataset(data.Dataset):
         self.transform = transform
         self.texts = None
         self.masks = None
-        self.captions = pd.read_csv(f'{root}/captions.csv')
+        self.captions = self.read_captions()
         self.tokenize()
 
     def __len__(self):
         return len(self.captions)
 
     def __getitem__(self, index):
-        filename = self.captions.filename[index]
+        image = self.open_image(self.captions.filename[index])
 
-        image = self.open(filename)
-        image = self.transform(image)
+        text = self.texts[index]
+        mask = self.masks[index]
 
-        return image, self.texts[index], self.masks[index]
+        return self.transform(image), text, mask
+    
+    def read_captions(self):
+        return pd.read_csv(f'{self.root}/captions.csv')
 
     def tokenize(self):
         captions = []
@@ -37,5 +40,5 @@ class CaptionDataset(data.Dataset):
         self.texts = tokenized_outputs.input_ids
         self.masks = tokenized_outputs.attention_mask
 
-    def open(self, filename):
+    def open_image(self, filename):
         return Image.open(f'{self.root}/images/{filename}')

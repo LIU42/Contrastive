@@ -8,12 +8,8 @@ from models import ContrastModel
 from dataset import CaptionDataset
 
 
-def load_configs():
-    with open('configs/eval.yaml', 'r') as configs:
-        return yaml.safe_load(configs)
-
-
-configs = load_configs()
+with open('configs/eval.yaml', 'r') as configs:
+    configs = yaml.safe_load(configs)
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),

@@ -10,11 +10,6 @@ from models import ContrastModel
 from dataset import CaptionDataset
 
 
-def load_configs():
-    with open('configs/train.yaml', 'r') as configs:
-        return yaml.safe_load(configs)
-
-
 def criterion(image_features, text_features, temperature):
     predicts = image_features @ text_features.T
     predicts /= temperature
@@ -40,7 +35,8 @@ def validation(image_features, text_features):
     return correct_i2t, correct_t2i
 
 
-configs = load_configs()
+with open('configs/train.yaml', 'r') as configs:
+    configs = yaml.safe_load(configs)
 
 augment_transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -72,9 +68,11 @@ load_path = configs['load-path']
 best_path = configs['best-path']
 last_path = configs['last-path']
 
-model = ContrastModel(pretrained=False)
+model = ContrastModel(pretrained=configs['load-pretrained'])
 model = model.cuda()
-model.load_state_dict(torch.load(load_path, map_location='cuda', weights_only=True))
+
+if configs['load-checkpoint']:
+    model.load_state_dict(torch.load(load_path, map_location='cuda', weights_only=True))
 
 scaler = torch.GradScaler()
 optimizer = optim.AdamW(model.parameters(), lr=configs['learning-rate'])
@@ -86,7 +84,7 @@ print(f'\n---------- Training Start ----------\n')
 
 for epoch in range(configs['epochs']):
     model.train()
-    train_loss = 0
+    training_loss = 0.0
 
     for index, (images, texts, masks) in enumerate(train_loader, start=1):
         images = images.cuda()
@@ -106,17 +104,17 @@ for epoch in range(configs['epochs']):
             loss.backward()
             optimizer.step()
 
-        train_loss += loss.item()
+        training_loss += loss.item()
 
         print(f'\rBatch Loss: {loss:.5f} [{index}/{len(train_loader)}]', end='')
 
-    train_loss /= len(train_loader)
-
     model.eval()
-    accuracy_i2t = 0
-    accuracy_t2i = 0
+    training_loss /= len(train_loader)
 
     with torch.no_grad():
+        accuracy_i2t = 0
+        accuracy_t2i = 0
+
         for images, texts, masks in valid_loader:
             images = images.cuda()
             texts = texts.cuda()
@@ -134,7 +132,7 @@ for epoch in range(configs['epochs']):
     accuracy_i2t /= len(valid_dataset)
     accuracy_t2i /= len(valid_dataset)
 
-    mean_accuracy = 1 / (1 / accuracy_i2t + 1 / accuracy_t2i)
+    mean_accuracy = 2 * (accuracy_i2t * accuracy_t2i) / (accuracy_i2t + accuracy_t2i)
 
     if mean_accuracy > best_accuracy:
         best_accuracy = mean_accuracy
@@ -142,7 +140,7 @@ for epoch in range(configs['epochs']):
 
     torch.save(model.state_dict(), last_path)
 
-    print(f'\tEpoch: {epoch:<6} Loss: {train_loss:<10.5f} I2T: {accuracy_i2t:<6.2f} T2I: {accuracy_t2i:<6.2f}')
+    print(f'\tEpoch: {epoch:<6} Loss: {training_loss:<10.5f} I2T: {accuracy_i2t:<6.2f} T2I: {accuracy_t2i:<6.2f}')
 
 print('\n---------- Training Finish ----------\n')
 print(f'Best Accuracy: {best_accuracy:.5f}')

@@ -6,6 +6,9 @@ use-amp: true
 use-augment: true
 temperature: 0.07
 
-load-path: "checkpoints/pretrain.pt"
+load-checkpoint: false
+load-pretrained: true
+
+load-path: "checkpoints/last.pt"
 best-path: "checkpoints/best.pt"
 last-path: "checkpoints/last.pt"
